@@ -11,11 +11,15 @@
   "license": "ISC",
   "dependencies": {
     "@types/express": "^4.17.11",
+    "@types/ioredis": "^4.26.4",
     "@types/morgan": "^1.9.2",
     "express": "^4.17.1",
     "express-validator": "^6.11.1",
+    "ioredis": "^4.27.2",
+    "mongodb": "^3.6.8",
     "morgan": "^1.10.0",
     "passport-jwt": "^4.0.0",
+    "rate-limiter-flexible": "^2.2.2",
     "totoro-node": "^2.0.5"
   }
 }

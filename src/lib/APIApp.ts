@@ -1,22 +1,33 @@
-import express, { Application } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import totoro from "totoro-node";
-import { Route, RouteOptions } from "../interfaces";
-import { join, sep, resolve } from "path";
-import { promises, readdir } from "fs";
+import { Route } from "../interfaces";
+import { join, resolve } from "path";
+import { promises } from "fs";
 import BaseRoute from "../routes/BaseRoute";
+import Redis, { Redis as IORedis } from "ioredis";
+import { RateLimiterRedis } from "rate-limiter-flexible";
+import RateLimiters from "../middleware/RateLimiters";
 
 export default class {
   public app: Application;
+  public redis: IORedis;
   config: {
     v1: { active: boolean; deprecated: boolean; endpoints: Route[] };
     v2: { active: boolean; deprecated: boolean; endpoints: Route[] };
   };
+  rateLimiters: RateLimiters;
 
   constructor() {
     this.app = express();
+    this.redis = new Redis({
+      host: "172.27.90.82",
+    });
+
+    this.rateLimiters = new RateLimiters(this);
 
     this.app.use(morgan("dev"));
+    this.app.use(this.rateLimiters.defaultLimiterMiddleware);
 
     this.config = {
       v1: {
